@@ -56,16 +56,18 @@ const ReviewForm = ({ userName = "" }) => {
       (qualityRating + quantityRating + serviceRating) / 3
     );
     setOverallRating(newOverallRating);
+
+    if (newOverallRating >= 4) {
+      const googleSearchUrl =
+        "https://search.google.com/local/writereview?placeid=ChIJywjU6WG_woAR3NrWwrEH_3M";
+      window.open(googleSearchUrl, "_blank");
+    }
   }, [qualityRating, quantityRating, serviceRating]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (overallRating >= 4) {
-      const googleSearchUrl =
-        "https://search.google.com/local/writereview?placeid=ChIJywjU6WG_woAR3NrWwrEH_3M";
-      window.open(googleSearchUrl, "_blank");
-    } else {
+    if (overallRating < 4) {
       try {
         const response = await fetch("/api/submit-review", {
           method: "POST",
@@ -107,6 +109,9 @@ const ReviewForm = ({ userName = "" }) => {
     setPhoneNumber("");
     setEmail("");
   };
+
+  const hasRatings =
+    qualityRating > 0 && quantityRating > 0 && serviceRating > 0;
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-8 bg-white rounded-xl shadow-lg space-y-6">
@@ -161,96 +166,103 @@ const ReviewForm = ({ userName = "" }) => {
           </div>
         </div>
 
-        {overallRating >= 4 && (
+        {hasRatings && (
           <>
             <div>
               <label
-                htmlFor="name"
+                htmlFor="description"
                 className="block text-gray-700 text-sm font-semibold mb-2"
               >
-                Your Name
+                Tell us more about your experience
               </label>
-              <input
-                type="text"
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+              <textarea
+                id="description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+                rows="4"
                 required
-                placeholder="Enter your name"
+                placeholder="Your feedback helps us improve..."
               />
             </div>
-            <div>
-              <label
-                htmlFor="phoneNumber"
-                className="block text-gray-700 text-sm font-semibold mb-2"
-              >
-                Phone Number
-              </label>
-              <input
-                type="tel"
-                id="phoneNumber"
-                value={phoneNumber}
-                onChange={(e) => setPhoneNumber(e.target.value)}
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
-                placeholder="Enter your phone number"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-gray-700 text-sm font-semibold mb-2"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
-                placeholder="Enter your email address"
-              />
-            </div>
+
+            {overallRating < 4 && (
+              <>
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-gray-700 text-sm font-semibold mb-2"
+                  >
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+                    required
+                    placeholder="Enter your name"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="phoneNumber"
+                    className="block text-gray-700 text-sm font-semibold mb-2"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    type="tel"
+                    id="phoneNumber"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+                    placeholder="Enter your phone number"
+                  />
+                </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block text-gray-700 text-sm font-semibold mb-2"
+                  >
+                    Email Address
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
+                    placeholder="Enter your email address"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                >
+                  Submit Review
+                </button>
+              </>
+            )}
           </>
         )}
-
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-gray-700 text-sm font-semibold mb-2"
-          >
-            Tell us more about your experience
-          </label>
-          <textarea
-            id="description"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200"
-            rows="4"
-            required
-            placeholder="Your feedback helps us improve..."
-          />
-        </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          Submit Review
-        </button>
-
-        <button
-          onClick={() =>
-            window.open(
-              "upi://pay?pn=Grabodo&pa=balajibizconsultancy-5@oksbi&cu=INR",
-              "_blank"
-            )
-          }
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
-        >
-          Pay online
-        </button>
       </form>
+
+      <h2 className="text-3xl font-bold text-gray-800 mb-6 text-center pt-10">
+        Pay Online
+      </h2>
+      <button
+        onClick={() =>
+          window.open(
+            "upi://pay?pn=ShashankPhatkure&pa=shashankphatkure-2@okicici&cu=INR",
+            "_blank"
+          )
+        }
+        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+      >
+        Pay Online
+      </button>
     </div>
   );
 };
