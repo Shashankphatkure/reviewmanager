@@ -14,6 +14,7 @@ import {
   MessageSquare,
   User,
 } from "lucide-react";
+import QRCode from "qrcode.react";
 
 const DashboardPage = () => {
   const [reviews, setReviews] = useState([]);
@@ -28,6 +29,8 @@ const DashboardPage = () => {
   const [selectedStars, setSelectedStars] = useState([]);
 
   useEffect(() => {
+    fetchReviews();
+    fetchServices();
     // Fetch initial data (mock data for demonstration)
     setReviews([
       { id: 1, name: "John Doe", rating: 4, comment: "Great service!" },
@@ -43,20 +46,20 @@ const DashboardPage = () => {
     //   { id: 2, name: "Deep Cleaning", price: 100 },
     // ]);
 
-    setCustomers([
-      {
-        id: 1,
-        name: "Alice Brown",
-        email: "alice@example.com",
-        phone: "123-456-7890",
-      },
-      {
-        id: 2,
-        name: "Charlie Davis",
-        email: "charlie@example.com",
-        phone: "098-765-4321",
-      },
-    ]);
+    // setCustomers([
+    //   {
+    //     id: 1,
+    //     name: "Alice Brown",
+    //     email: "alice@example.com",
+    //     phone: "123-456-7890",
+    //   },
+    //   {
+    //     id: 2,
+    //     name: "Charlie Davis",
+    //     email: "charlie@example.com",
+    //     phone: "098-765-4321",
+    //   },
+    // ]);
     setUpiId("shashankphatkure-2@okicici");
     setPlaceId("ChIJywjU6WG_woAR3NrWwrEH_3M");
   }, []);
@@ -74,6 +77,20 @@ const DashboardPage = () => {
       setServices(data);
     } catch (error) {
       console.error("Error fetching services:", error);
+    }
+  };
+
+  const fetchReviews = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setReviews(data);
+    } catch (error) {
+      console.error("Error fetching reviews:", error);
     }
   };
 
@@ -367,8 +384,8 @@ const DashboardPage = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {customers.map((customer) => (
-                  <tr key={customer.id}>
+                {reviews.map((review) => (
+                  <tr key={review.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
@@ -376,19 +393,19 @@ const DashboardPage = () => {
                         </div>
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900">
-                            {customer.name}
+                            {review.name}
                           </div>
                         </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {customer.email}
+                        {review.email}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-900">
-                        {customer.phone}
+                        {review.phone_number}
                       </div>
                     </td>
                   </tr>
@@ -443,47 +460,66 @@ const DashboardPage = () => {
           </div>
         </section>
 
-        {/* Settings Section */}
+        {/* Settings and QR Code Section */}
         <section className="bg-white rounded-2xl shadow-xl p-8 transition duration-300 ease-in-out transform hover:scale-105">
-          <h2 className="text-3xl font-bold mb-6 text-indigo-700">Settings</h2>
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                UPI ID
-              </label>
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  value={upiId}
-                  onChange={(e) => setUpiId(e.target.value)}
-                  className="border rounded-lg px-3 py-2 flex-grow mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <button
-                  onClick={handleUpiSave}
-                  className="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out shadow-lg"
-                >
-                  Save
-                </button>
+          <h2 className="text-3xl font-bold mb-6 text-indigo-700">
+            Settings and QR Code
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* Settings Column */}
+            <div className="space-y-6">
+              <h3 className="text-xl font-semibold mb-4 text-indigo-600">
+                Settings
+              </h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  UPI ID
+                </label>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
+                    className="border rounded-lg px-3 py-2 flex-grow mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <button
+                    onClick={handleUpiSave}
+                    className="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out shadow-lg"
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Google My Business Place ID
+                </label>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    value={placeId}
+                    onChange={(e) => setPlaceId(e.target.value)}
+                    className="border rounded-lg px-3 py-2 flex-grow mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <button
+                    onClick={handlePlaceIdSave}
+                    className="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out shadow-lg"
+                  >
+                    Save
+                  </button>
+                </div>
               </div>
             </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Google My Business Place ID
-              </label>
-              <div className="flex items-center">
-                <input
-                  type="text"
-                  value={placeId}
-                  onChange={(e) => setPlaceId(e.target.value)}
-                  className="border rounded-lg px-3 py-2 flex-grow mr-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-                <button
-                  onClick={handlePlaceIdSave}
-                  className="bg-blue-500 text-white px-6 py-3 rounded-full hover:bg-blue-600 transition duration-300 ease-in-out shadow-lg"
-                >
-                  Save
-                </button>
-              </div>
+
+            {/* QR Code Column */}
+            <div className="flex flex-col items-center justify-center">
+              <h3 className="text-xl font-semibold mb-4 text-indigo-600">
+                Dashboard QR Code
+              </h3>
+              <QRCode value="http://localhost:3001/dashboard" size={200} />
+              <p className="mt-4 text-sm text-gray-600">
+                Scan to access the dashboard
+              </p>
             </div>
           </div>
         </section>
