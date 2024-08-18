@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { supabase } from "../../lib/supabaseClient";
 import {
   Star,
   Edit2,
@@ -37,10 +38,10 @@ const DashboardPage = () => {
         comment: "Excellent quality fruits!",
       },
     ]);
-    setServices([
-      { id: 1, name: "Basic Cleaning", price: 50 },
-      { id: 2, name: "Deep Cleaning", price: 100 },
-    ]);
+    // setServices([
+    //   { id: 1, name: "Basic Cleaning", price: 50 },
+    //   { id: 2, name: "Deep Cleaning", price: 100 },
+    // ]);
 
     setCustomers([
       {
@@ -59,6 +60,22 @@ const DashboardPage = () => {
     setUpiId("shashankphatkure-2@okicici");
     setPlaceId("ChIJywjU6WG_woAR3NrWwrEH_3M");
   }, []);
+
+  const fetchServices = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("services")
+        .select("*")
+        // Add a where clause if you need to filter by businessid
+        // .eq('businessid', currentBusinessId)
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+      setServices(data);
+    } catch (error) {
+      console.error("Error fetching services:", error);
+    }
+  };
 
   const handleLogout = () => {
     // Implement logout logic here
@@ -87,21 +104,53 @@ const DashboardPage = () => {
     setEditingService({ ...service });
   };
 
-  const handleServiceSave = () => {
-    setServices(
-      services.map((s) => (s.id === editingService.id ? editingService : s))
-    );
-    setEditingService(null);
+  const handleServiceSave = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("services")
+        .update({ name: editingService.name, price: editingService.price })
+        .eq("id", editingService.id);
+
+      if (error) throw error;
+
+      setServices(
+        services.map((s) =>
+          s.id === editingService.id ? { ...s, ...data[0] } : s
+        )
+      );
+      setEditingService(null);
+    } catch (error) {
+      console.error("Error updating service:", error);
+    }
   };
 
-  const handleServiceDelete = (id) => {
-    setServices(services.filter((s) => s.id !== id));
+  const handleServiceDelete = async (id) => {
+    try {
+      const { error } = await supabase.from("services").delete().eq("id", id);
+
+      if (error) throw error;
+
+      setServices(services.filter((s) => s.id !== id));
+    } catch (error) {
+      console.error("Error deleting service:", error);
+    }
   };
 
-  const handleAddService = () => {
+  const handleAddService = async () => {
     if (newService.name && newService.price) {
-      setServices([...services, { id: Date.now(), ...newService }]);
-      setNewService({ name: "", price: "" });
+      try {
+        const { data, error } = await supabase
+          .from("services")
+          .insert([{ name: newService.name, price: newService.price }])
+          .select();
+
+        if (error) throw error;
+
+        setServices([...services, data[0]]);
+        setNewService({ name: "", price: "" });
+      } catch (error) {
+        console.error("Error adding service:", error);
+      }
     }
   };
 
