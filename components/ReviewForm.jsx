@@ -16,7 +16,7 @@ const ReviewForm = () => {
     if (rating >= 4) {
       // Redirect to Google search results page for Zudio Kharghar
       const googleSearchUrl =
-        "https://www.google.com/search?q=zudio+kharghar&lqi=Cg56dWRpbyBraGFyZ2hhckjG_JKiw62AgAhaHBAAGAAYASIOenVkaW8ga2hhcmdoYXIqBAgCEACSAQ5jbG90aGluZ19zdG9yZZoBI0NoWkRTVWhOTUc5blMwVkpRMEZuU1VRMk56bElOR0ZCRUFFqgE2EAEyHhABIhraVfQAWI_-P_ahbk3g_mMefHyUCSCuB1z4FDISEAIiDnp1ZGlvIGtoYXJnaGFy#lkt=LocalPoiReviews&lrd=0x3be7c3be050fb1bd:0x697f0f5e1240b38b,3,,,,&rlimm=7601811592732259211";
+        "https://search.google.com/local/writereview?placeid=ChIJywjU6WG_woAR3NrWwrEH_3M";
       window.open(googleSearchUrl, "_blank");
     } else {
       // Submit to internal review system
