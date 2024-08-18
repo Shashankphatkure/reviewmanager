@@ -161,6 +161,39 @@ const ReviewForm = ({ userName = "" }) => {
         alert("There was an error submitting your review. Please try again.");
       }
     }
+
+    e.preventDefault();
+
+    if (overallRating < 4) {
+      try {
+        const response = await fetch("/api/submit-review", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            phoneNumber,
+            email,
+            overallRating,
+            qualityRating,
+            quantityRating,
+            serviceRating,
+            description,
+          }),
+        });
+
+        if (response.ok) {
+          alert("Thank you for your review!");
+          resetForm();
+        } else {
+          alert("There was an error submitting your review. Please try again.");
+        }
+      } catch (error) {
+        console.error("Error submitting review:", error);
+        alert("There was an error submitting your review. Please try again.");
+      }
+    }
   };
 
   const resetForm = () => {
