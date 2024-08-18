@@ -242,7 +242,7 @@ const ReviewForm = ({ userName = "" }) => {
         <button
           onClick={() =>
             window.open(
-              "upi://pay?pn=AtasaResort&pa=atasaresort@icici&cu=INR",
+              "upi://pay?pn=Grabodo&pa=balajibizconsultancy-2@okaxis&cu=INR",
               "_blank"
             )
           }
