@@ -13,7 +13,7 @@ const ServicePaymentPopup = ({ isOpen, onClose }) => {
   ];
 
   const handlePayment = (serviceName, price) => {
-    const upiLink = `upi://pay?pn=SHASHANK PHATKURE&pa=shashankphatkure-2@okicici&cu=INR&am=${price}`;
+    const upiLink = `upi://pay?pn=shashank&pa=paytmqr4aqq29jatc@paytm&cu=INR&am=${price}`;
     window.open(upiLink, "_blank");
   };
 
@@ -355,7 +355,7 @@ const ReviewForm = ({ userName = "" }) => {
           <button
             onClick={() =>
               window.open(
-                "upi://pay?pn=Shashank Phatkure&pa=shashankphatkure-2@okicici&cu=INR",
+                "upi://pay?pn=Shashank Phatkure&pa=paytmqr4aqq29jatc@paytm&cu=INR",
                 "_blank"
               )
             }
