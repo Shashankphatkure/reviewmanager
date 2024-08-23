@@ -2,6 +2,12 @@
 
 import React, { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
+import { createClient } from "@supabase/supabase-js";
+
+// Initialize Supabase client
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const FormBuilder = () => {
   const [formFields, setFormFields] = useState([]);
@@ -16,7 +22,6 @@ const FormBuilder = () => {
     const storedForms = JSON.parse(localStorage.getItem("savedForms") || "[]");
     setSavedForms(storedForms);
 
-    // Check if there's a form ID in the URL
     const urlParams = new URLSearchParams(window.location.search);
     const formId = urlParams.get("formId");
     if (formId) {
@@ -62,17 +67,39 @@ const FormBuilder = () => {
     alert("Form saved successfully!");
   };
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     let message = `Form submission from ${formTitle}:\n\n`;
+    let supabaseData = {
+      form_title: formTitle,
+      whatsapp_number: whatsappNumber,
+    };
+
     for (let [key, value] of formData.entries()) {
       message += `${key}: ${value}\n`;
+      supabaseData[key] = value;
     }
+
+    // Send data to WhatsApp
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       message
     )}`;
     window.open(whatsappUrl, "_blank");
+
+    // Send data to Supabase
+    try {
+      const { data, error } = await supabase
+        .from("appointment")
+        .insert([supabaseData]);
+
+      if (error) throw error;
+      console.log("Data inserted successfully:", data);
+      alert("Form submitted successfully to WhatsApp and Supabase!");
+    } catch (error) {
+      console.error("Error inserting data:", error);
+      alert("Error submitting form to Supabase. Please try again.");
+    }
   };
 
   const editForm = (formId) => {
@@ -268,7 +295,7 @@ const FormBuilder = () => {
           type="submit"
           className="w-full px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
         >
-          Submit to WhatsApp
+          Submit
         </button>
       </form>
       <button
@@ -331,7 +358,7 @@ const FormBuilder = () => {
             type="submit"
             className="w-full px-6 py-3 bg-green-500 text-white rounded-md hover:bg-green-600 transition duration-300"
           >
-            Submit to WhatsApp
+            Submit
           </button>
         </form>
       </div>
