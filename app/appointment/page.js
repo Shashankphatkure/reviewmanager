@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { createClient } from "@supabase/supabase-js";
 import Image from 'next/image';
@@ -13,7 +13,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-const FormBuilder = () => {
+const FormBuilderContent = () => {
   const [formFields, setFormFields] = useState([]);
   const [formTitle, setFormTitle] = useState("");
   const [whatsappNumber, setWhatsappNumber] = useState("");
@@ -629,6 +629,14 @@ const FormBuilder = () => {
         {currentView !== "fillForm" && renderSavedForms()}
       </div>
     </div>
+  );
+};
+
+const FormBuilder = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <FormBuilderContent />
+    </Suspense>
   );
 };
 
