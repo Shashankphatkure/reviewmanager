@@ -248,17 +248,25 @@ const BusinessPage = ({ params }) => {
             )}
           </form>
 
-          <div className="mt-8 flex justify-between items-center">
-            
-            {business.upi_id && (
+          <div className="mt-8">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-gray-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-gray-500">OR</span>
+              </div>
+            </div>
+
+            <div className="mt-6">
               <button
                 onClick={() => window.open(`upi://pay?pa=${business.upi_id}&pn=${business.name}&cu=INR`, "_blank")}
-                className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 transition duration-300 flex items-center"
+                className="w-full bg-green-500 text-white px-4 py-3 rounded-md hover:bg-green-600 transition duration-300 flex items-center justify-center"
               >
                 <CreditCard className="mr-2" size={20} />
                 Pay via UPI
               </button>
-            )}
+            </div>
           </div>
         </div>
       </div>
