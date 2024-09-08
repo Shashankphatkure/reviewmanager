@@ -4,6 +4,8 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../../../lib/supabaseClient";
 import { Star, CreditCard } from "lucide-react";
+import ShimmerEffect from "@/components/ShimmerEffect";
+
 
 const BusinessPage = ({ params }) => {
   const router = useRouter();
@@ -120,7 +122,7 @@ const BusinessPage = ({ params }) => {
     </div>
   );
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <ShimmerEffect />;
   if (error) return <div>Error: {error}</div>;
   if (!business) return <div>Business not found</div>;
 
