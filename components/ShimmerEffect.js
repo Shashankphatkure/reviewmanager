@@ -24,17 +24,17 @@ const ShimmerEffect = () => {
           
           <div className="h-40 bg-gray-200 rounded mb-4"></div>
           
-          <div className="space-y-4 mb-8">
+          {/* <div className="space-y-4 mb-8">
             {[1, 2, 3].map((item) => (
               <div key={item} className="h-10 bg-gray-200 rounded"></div>
             ))}
-          </div>
+          </div> */}
           
-          <div className="h-12 bg-gray-200 rounded mb-8"></div>
+          {/* <div className="h-12 bg-gray-200 rounded mb-8"></div>
           
           <div className="h-px bg-gray-300 mb-8"></div>
           
-          <div className="h-12 bg-gray-200 rounded"></div>
+          <div className="h-12 bg-gray-200 rounded"></div> */}
         </div>
       </div>
     </div>
