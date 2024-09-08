@@ -33,9 +33,13 @@ const DashboardPage = () => {
 
   useEffect(() => {
     fetchBusinessDetails();
-    fetchReviews();
-    fetchServices();
   }, []);
+
+  useEffect(() => {
+    if (business) {
+      fetchReviews();
+    }
+  }, [business]);
 
   const fetchServices = async () => {
     try {
@@ -56,7 +60,9 @@ const DashboardPage = () => {
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
-        .order("created_at", { ascending: false });
+        .eq('businessid', business.id)
+        .order("created_at", { ascending: false })
+        .limit(10); // Limit to the 10 most recent reviews
 
       if (error) throw error;
       setReviews(data);
@@ -200,6 +206,23 @@ const DashboardPage = () => {
     ? reviews.filter((review) => selectedStars.includes(review.rating))
     : reviews;
 
+  const getReviewBackgroundColor = (rating) => {
+    switch (rating) {
+      case 1:
+        return "bg-red-100";
+      case 2:
+        return "bg-orange-100";
+      case 3:
+        return "bg-yellow-100";
+      case 4:
+        return "bg-green-100";
+      case 5:
+        return "bg-emerald-100";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
       <div className="max-w-7xl mx-auto">
@@ -245,24 +268,12 @@ const DashboardPage = () => {
             <h2 className="text-3xl font-bold mb-6 text-indigo-700">
               Recent Reviews
             </h2>
-            <div className="mb-4 flex space-x-2">
-              {[1, 2, 3, 4, 5].map((star) => (
-                <button
-                  key={star}
-                  onClick={() => handleStarFilter(star)}
-                  className={`px-3 py-1 rounded-full ${
-                    selectedStars.includes(star)
-                      ? "bg-yellow-400 text-white"
-                      : "bg-gray-200 text-gray-700"
-                  } transition duration-300 ease-in-out`}
-                >
-                  {star} ⭐
-                </button>
-              ))}
-            </div>
             <div className="space-y-6">
-              {filteredReviews.map((review) => (
-                <div key={review.id} className="border-b border-gray-200 pb-4">
+              {reviews.map((review) => (
+                <div 
+                  key={review.id} 
+                  className={`border-b border-gray-200 pb-4 ${getReviewBackgroundColor(review.overall_rating)}`}
+                >
                   <div className="flex items-center mb-2">
                     <span className="font-semibold mr-2 text-gray-800">
                       {review.name}
@@ -273,7 +284,7 @@ const DashboardPage = () => {
                           key={i}
                           size={18}
                           className={
-                            i < review.rating
+                            i < review.overall_rating
                               ? "text-yellow-400 fill-yellow-400"
                               : "text-gray-300"
                           }
@@ -281,7 +292,7 @@ const DashboardPage = () => {
                       ))}
                     </div>
                   </div>
-                  <p className="text-gray-600 italic">{review.comment}</p>
+                  <p className="text-gray-600 italic">{review.description}</p>
                 </div>
               ))}
             </div>
@@ -542,11 +553,16 @@ const DashboardPage = () => {
             {/* QR Code Column */}
             <div className="flex flex-col items-center justify-center">
               <h3 className="text-xl font-semibold mb-4 text-indigo-600">
-                Dashboard QR Code
+                Business Review QR Code
               </h3>
-              <QRCode value="http://localhost:3001/dashboard" size={200} />
+              {business && (
+                <QRCode 
+                  value={`https://reviewmanager.vercel.app/business/${business.id}`} 
+                  size={200} 
+                />
+              )}
               <p className="mt-4 text-sm text-gray-600">
-                Scan to access the dashboard
+                Scan to leave a review for your business
               </p>
             </div>
           </div>
@@ -554,6 +570,23 @@ const DashboardPage = () => {
       </div>
     </div>
   );
+};
+
+const getReviewBackgroundColor = (rating) => {
+  switch (rating) {
+    case 1:
+      return "bg-red-100";
+    case 2:
+      return "bg-orange-100";
+    case 3:
+      return "bg-yellow-100";
+    case 4:
+      return "bg-green-100";
+    case 5:
+      return "bg-emerald-100";
+    default:
+      return "";
+  }
 };
 
 export default DashboardPage;
