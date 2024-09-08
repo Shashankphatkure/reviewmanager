@@ -129,9 +129,9 @@ const BusinessPage = ({ params }) => {
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
         <div className="p-8">
           <h1 className="text-3xl font-bold text-indigo-600 mb-4">{business.name}</h1>
-          <p className="text-gray-600 mb-2">UPI ID: {business.upi_id || "Not set"}</p>
+          {/* <p className="text-gray-600 mb-2">UPI ID: {business.upi_id || "Not set"}</p>
           <p className="text-gray-600 mb-4">Google Places ID: {business.places_id || "Not set"}</p>
-          
+           */}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SubReviewItem
