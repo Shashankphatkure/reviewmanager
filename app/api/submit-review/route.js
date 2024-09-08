@@ -11,6 +11,7 @@ export async function POST(request) {
     quantityRating,
     serviceRating,
     description,
+    businessId
   } = await request.json();
 
   try {
@@ -26,6 +27,7 @@ export async function POST(request) {
           quantity_rating: quantityRating,
           service_rating: serviceRating,
           description,
+          businessid: businessId // Make sure this matches the column name in your table
         },
       ]);
 
@@ -38,7 +40,7 @@ export async function POST(request) {
   } catch (error) {
     console.error("Error submitting review:", error);
     return NextResponse.json(
-      { message: "Error submitting review" },
+      { message: "Error submitting review", error: error.message },
       { status: 500 }
     );
   }

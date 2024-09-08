@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { supabase } from "../../lib/supabaseClient";
 import {
   Star,
@@ -17,6 +18,7 @@ import {
 import QRCode from "qrcode.react";
 
 const DashboardPage = () => {
+  const router = useRouter();
   const [reviews, setReviews] = useState([]);
   const [services, setServices] = useState([]);
   const [upiId, setUpiId] = useState("");
@@ -27,41 +29,12 @@ const DashboardPage = () => {
   const [bulkSmsContent, setBulkSmsContent] = useState("");
   const [customers, setCustomers] = useState([]);
   const [selectedStars, setSelectedStars] = useState([]);
+  const [business, setBusiness] = useState(null);
 
   useEffect(() => {
+    fetchBusinessDetails();
     fetchReviews();
     fetchServices();
-    // Fetch initial data (mock data for demonstration)
-    setReviews([
-      { id: 1, name: "John Doe", rating: 4, comment: "Great service!" },
-      {
-        id: 2,
-        name: "Jane Smith",
-        rating: 5,
-        comment: "Excellent quality fruits!",
-      },
-    ]);
-    // setServices([
-    //   { id: 1, name: "Basic Cleaning", price: 50 },
-    //   { id: 2, name: "Deep Cleaning", price: 100 },
-    // ]);
-
-    // setCustomers([
-    //   {
-    //     id: 1,
-    //     name: "Alice Brown",
-    //     email: "alice@example.com",
-    //     phone: "123-456-7890",
-    //   },
-    //   {
-    //     id: 2,
-    //     name: "Charlie Davis",
-    //     email: "charlie@example.com",
-    //     phone: "098-765-4321",
-    //   },
-    // ]);
-    setUpiId("shashankphatkure-2@okicici");
-    setPlaceId("ChIJywjU6WG_woAR3NrWwrEH_3M");
   }, []);
 
   const fetchServices = async () => {
@@ -69,8 +42,6 @@ const DashboardPage = () => {
       const { data, error } = await supabase
         .from("services")
         .select("*")
-        // Add a where clause if you need to filter by businessid
-        // .eq('businessid', currentBusinessId)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
@@ -94,25 +65,41 @@ const DashboardPage = () => {
     }
   };
 
+  const fetchBusinessDetails = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("No user found");
+
+      const { data, error } = await supabase
+        .from('businesses')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error) throw error;
+      setBusiness(data);
+      setUpiId(data.upi_id || "");
+      setPlaceId(data.places_id || "");
+    } catch (error) {
+      console.error("Error fetching business details:", error);
+    }
+  };
+
   const handleLogout = () => {
-    // Implement logout logic here
     console.log("Logging out...");
+    router.push("/signup");
   };
 
   const handleBulkSms = () => {
-    // Implement bulk SMS sending logic here
     console.log("Sending bulk SMS:", bulkSmsContent);
-    // Reset the content after sending
     setBulkSmsContent("");
   };
 
   const handleBulkEmail = () => {
-    // Implement bulk email sending logic here
     console.log("Sending bulk email:", {
       subject: bulkEmailSubject,
       content: bulkEmailContent,
     });
-    // Reset the content after sending
     setBulkEmailSubject("");
     setBulkEmailContent("");
   };
@@ -171,14 +158,34 @@ const DashboardPage = () => {
     }
   };
 
-  const handleUpiSave = () => {
-    // Save UPI ID logic here
-    console.log("UPI ID saved:", upiId);
+  const handleUpiSave = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('businesses')
+        .update({ upi_id: upiId })
+        .eq('user_id', business.user_id);
+
+      if (error) throw error;
+      console.log("UPI ID saved:", upiId);
+      setBusiness({ ...business, upi_id: upiId });
+    } catch (error) {
+      console.error("Error saving UPI ID:", error);
+    }
   };
 
-  const handlePlaceIdSave = () => {
-    // Save Place ID logic here
-    console.log("Place ID saved:", placeId);
+  const handlePlaceIdSave = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('businesses')
+        .update({ places_id: placeId })
+        .eq('user_id', business.user_id);
+
+      if (error) throw error;
+      console.log("Place ID saved:", placeId);
+      setBusiness({ ...business, places_id: placeId });
+    } catch (error) {
+      console.error("Error saving Place ID:", error);
+    }
   };
 
   const handleStarFilter = (star) => {
@@ -192,8 +199,6 @@ const DashboardPage = () => {
   const filteredReviews = selectedStars.length
     ? reviews.filter((review) => selectedStars.includes(review.rating))
     : reviews;
-
-  // ... (keep all the existing functions like handleServiceEdit, handleServiceSave, etc.)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">
@@ -210,6 +215,29 @@ const DashboardPage = () => {
             Logout
           </button>
         </div>
+
+        {business && (
+          <section className="bg-white rounded-2xl shadow-xl p-8 mb-8 transition duration-300 ease-in-out transform hover:scale-105">
+            <h2 className="text-3xl font-bold mb-4 text-indigo-700">
+              Your Business
+            </h2>
+            <p className="text-xl text-gray-700 mb-2">
+              Name: {business.name}
+            </p>
+            <p className="text-gray-600 mb-2">
+              UPI ID: {business.upi_id || "Not set"}
+            </p>
+            <p className="text-gray-600 mb-4">
+              Google Places ID: {business.places_id || "Not set"}
+            </p>
+            <button
+              onClick={() => router.push(`/business/${business.id}`)}
+              className="bg-indigo-500 text-white px-6 py-2 rounded-full hover:bg-indigo-600 transition duration-300 ease-in-out"
+            >
+              Manage Business
+            </button>
+          </section>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Reviews Section */}
