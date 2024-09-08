@@ -132,6 +132,9 @@ const BusinessPage = ({ params }) => {
           {/* <p className="text-gray-600 mb-2">UPI ID: {business.upi_id || "Not set"}</p>
           <p className="text-gray-600 mb-4">Google Places ID: {business.places_id || "Not set"}</p>
            */}
+                  <p className="text-gray-600 mb-8">Please leave a review to help us improve</p>
+                  
+                  
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SubReviewItem
