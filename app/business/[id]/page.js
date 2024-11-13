@@ -171,9 +171,9 @@ const BusinessPage = ({ params }) => {
     >
       <div className="max-w-3xl mx-auto backdrop-blur-md bg-black/20 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.25)] border border-white/20 overflow-hidden">
         <div className="p-4 sm:p-8">
-          <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
+          <div className="flex flex-row items-center gap-4 mb-8">
             {business?.logo_url && (
-              <div className="w-20 h-20 sm:w-16 sm:h-16 rounded-full bg-white/70 flex items-center justify-center overflow-hidden">
+              <div className="w-16 h-16 rounded-full bg-white/70 flex-shrink-0 flex items-center justify-center overflow-hidden">
                 <img
                   src={business.logo_url}
                   alt={`${business.name} logo`}
@@ -185,8 +185,8 @@ const BusinessPage = ({ params }) => {
                 />
               </div>
             )}
-            <div className="text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+            <div className="flex-1">
+              <h1 className="text-xl sm:text-3xl font-bold text-white mb-1 sm:mb-2">
                 {business.name}
               </h1>
               <p className="text-sm sm:text-base text-white/90">
