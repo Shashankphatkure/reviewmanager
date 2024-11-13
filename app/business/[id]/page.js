@@ -242,24 +242,26 @@ const BusinessPage = ({ params }) => {
               </div>
             </div>
 
-            {overallRating > 0 && overallRating < 4 && (
-              <>
-                <div>
-                  <label className="block text-white text-sm font-semibold mb-2">
-                    Tell us more about your experience
-                  </label>
-                  <textarea
-                    id="description"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
-                    rows="4"
-                    required
-                    placeholder="Your feedback helps us improve..."
-                  />
-                </div>
+            {ratingFactor1Value > 0 &&
+              ratingFactor2Value > 0 &&
+              ratingFactor3Value > 0 &&
+              overallRating < 4 && (
+                <div className="space-y-6 animate-fadeIn">
+                  <div>
+                    <label className="block text-white text-sm font-semibold mb-2">
+                      Tell us more about your experience
+                    </label>
+                    <textarea
+                      id="description"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
+                      rows="4"
+                      required
+                      placeholder="Your feedback helps us improve..."
+                    />
+                  </div>
 
-                <div className="space-y-6">
                   <div>
                     <label className="block text-white text-sm font-semibold mb-2">
                       Your Name
@@ -310,7 +312,15 @@ const BusinessPage = ({ params }) => {
                     Submit Review
                   </button>
                 </div>
-              </>
+              )}
+
+            {overallRating >= 4 && (
+              <div className="text-center text-white mt-4">
+                <p className="text-lg">Thank you for your positive rating!</p>
+                <p className="text-sm opacity-80">
+                  You will be redirected to leave a Google review.
+                </p>
+              </div>
             )}
           </form>
 
