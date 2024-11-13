@@ -132,7 +132,7 @@ const BusinessPage = ({ params }) => {
 
     return (
       <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-semibold mb-2">
+        <label className="block text-white text-sm font-semibold mb-2">
           {title}
         </label>
         <div className="flex space-x-1">
@@ -158,22 +158,38 @@ const BusinessPage = ({ params }) => {
   if (!business) return <div>Business not found</div>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-8">
-      <div className="max-w-3xl mx-auto backdrop-blur-sm bg-white/60 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.25)] border border-white/20 overflow-hidden">
+    <div
+      className="min-h-screen p-8"
+      style={{
+        backgroundImage: business?.background_url
+          ? `url(${business.background_url})`
+          : "linear-gradient(to bottom right, #6b21a8, #818cf8, #93c5fd)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="max-w-3xl mx-auto backdrop-blur-md bg-black/20 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.25)] border border-white/20 overflow-hidden">
         <div className="p-8">
           <div className="flex items-center gap-4 mb-8">
-            <div className="w-16 h-16 rounded-full bg-white/50 flex items-center justify-center">
-              <img
-                src={business.logo || "/default-logo.png"}
-                alt={`${business.name} logo`}
-                className="w-12 h-12 object-contain rounded-full"
-              />
-            </div>
+            {business?.logo_url && (
+              <div className="w-16 h-16 rounded-full bg-white/70 flex items-center justify-center overflow-hidden">
+                <img
+                  src={business.logo_url}
+                  alt={`${business.name} logo`}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.target.src = "/default-logo.png"; // Fallback to default logo
+                    e.target.onerror = null; // Prevent infinite loop
+                  }}
+                />
+              </div>
+            )}
             <div>
-              <h1 className="text-3xl font-bold text-gray-800/90 mb-2">
+              <h1 className="text-3xl font-bold text-white mb-2">
                 {business.name}
               </h1>
-              <p className="text-gray-700/80">
+              <p className="text-white/90">
                 Please leave a review to help us improve
               </p>
             </div>
@@ -208,7 +224,7 @@ const BusinessPage = ({ params }) => {
             </div>
 
             <div className="border-t border-white/40 pt-6">
-              <h3 className="text-lg font-semibold mb-2 text-center text-gray-800/90">
+              <h3 className="text-lg font-semibold mb-2 text-center text-white">
                 Overall Rating
               </h3>
               <div className="flex justify-center space-x-2">
@@ -229,14 +245,14 @@ const BusinessPage = ({ params }) => {
             {overallRating > 0 && overallRating < 4 && (
               <>
                 <div>
-                  <label className="block text-gray-700/90 text-sm font-semibold mb-2">
+                  <label className="block text-white text-sm font-semibold mb-2">
                     Tell us more about your experience
                   </label>
                   <textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-4 py-3 text-gray-700 bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-500/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
+                    className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
                     rows="4"
                     required
                     placeholder="Your feedback helps us improve..."
@@ -245,7 +261,7 @@ const BusinessPage = ({ params }) => {
 
                 <div className="space-y-6">
                   <div>
-                    <label className="block text-gray-700/90 text-sm font-semibold mb-2">
+                    <label className="block text-white text-sm font-semibold mb-2">
                       Your Name
                     </label>
                     <input
@@ -253,14 +269,14 @@ const BusinessPage = ({ params }) => {
                       id="name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-3 text-gray-700 bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-500/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
+                      className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
                       required
                       placeholder="Enter your name"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-gray-700/90 text-sm font-semibold mb-2">
+                    <label className="block text-white text-sm font-semibold mb-2">
                       Phone Number
                     </label>
                     <input
@@ -268,13 +284,13 @@ const BusinessPage = ({ params }) => {
                       id="phoneNumber"
                       value={phoneNumber}
                       onChange={(e) => setPhoneNumber(e.target.value)}
-                      className="w-full px-4 py-3 text-gray-700 bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-500/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
+                      className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
                       placeholder="Enter your phone number"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-gray-700/90 text-sm font-semibold mb-2">
+                    <label className="block text-white text-sm font-semibold mb-2">
                       Email Address
                     </label>
                     <input
@@ -282,7 +298,7 @@ const BusinessPage = ({ params }) => {
                       id="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-3 text-gray-700 bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-500/50 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
+                      className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
                       placeholder="Enter your email address"
                     />
                   </div>
@@ -301,10 +317,10 @@ const BusinessPage = ({ params }) => {
           <div className="mt-8">
             <div className="relative">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300/30"></div>
+                <div className="w-full border-t border-white/30"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-4 py-1 bg-white/20 backdrop-blur-xl text-gray-600 rounded-full border border-white/40">
+                <span className="px-4 py-1 bg-white/20 backdrop-blur-xl text-white rounded-full border border-white/40">
                   OR
                 </span>
               </div>
