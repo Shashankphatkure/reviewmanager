@@ -159,7 +159,7 @@ const BusinessPage = ({ params }) => {
 
   return (
     <div
-      className="min-h-screen p-8"
+      className="min-h-screen p-4 sm:p-8"
       style={{
         backgroundImage: business?.background_url
           ? `url(${business.background_url})`
@@ -170,26 +170,26 @@ const BusinessPage = ({ params }) => {
       }}
     >
       <div className="max-w-3xl mx-auto backdrop-blur-md bg-black/20 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.25)] border border-white/20 overflow-hidden">
-        <div className="p-8">
-          <div className="flex items-center gap-4 mb-8">
+        <div className="p-4 sm:p-8">
+          <div className="flex flex-col sm:flex-row items-center gap-4 mb-8">
             {business?.logo_url && (
-              <div className="w-16 h-16 rounded-full bg-white/70 flex items-center justify-center overflow-hidden">
+              <div className="w-20 h-20 sm:w-16 sm:h-16 rounded-full bg-white/70 flex items-center justify-center overflow-hidden">
                 <img
                   src={business.logo_url}
                   alt={`${business.name} logo`}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    e.target.src = "/default-logo.png"; // Fallback to default logo
-                    e.target.onerror = null; // Prevent infinite loop
+                    e.target.src = "/default-logo.png";
+                    e.target.onerror = null;
                   }}
                 />
               </div>
             )}
-            <div>
-              <h1 className="text-3xl font-bold text-white mb-2">
+            <div className="text-center sm:text-left">
+              <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
                 {business.name}
               </h1>
-              <p className="text-white/90">
+              <p className="text-sm sm:text-base text-white/90">
                 Please leave a review to help us improve
               </p>
             </div>
@@ -227,11 +227,11 @@ const BusinessPage = ({ params }) => {
               <h3 className="text-lg font-semibold mb-2 text-center text-white">
                 Overall Rating
               </h3>
-              <div className="flex justify-center space-x-2">
+              <div className="flex justify-center space-x-1 sm:space-x-2">
                 {[1, 2, 3, 4, 5].map((star) => (
                   <Star
                     key={star}
-                    size={40}
+                    size={32}
                     className={`transition-colors duration-200 ${
                       star <= overallRating
                         ? "text-yellow-400 fill-yellow-400"
