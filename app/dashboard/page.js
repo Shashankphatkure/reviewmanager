@@ -100,6 +100,9 @@ const DashboardPage = () => {
       setBusiness(data);
       setUpiId(data.upi_id || "");
       setPlaceId(data.places_id || "");
+      setRatingFactor1(data.rating_factor_1 || "");
+      setRatingFactor2(data.rating_factor_2 || "");
+      setRatingFactor3(data.rating_factor_3 || "");
     } catch (error) {
       console.error("Error fetching business details:", error);
     }
@@ -268,14 +271,18 @@ const DashboardPage = () => {
 
       if (uploadError) throw uploadError;
 
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("business-assets").getPublicUrl(fileName);
+
       const { data: updateData, error: updateError } = await supabase
         .from("businesses")
-        .update({ logo_url: fileName })
+        .update({ logo_url: publicUrl })
         .eq("id", business.id);
 
       if (updateError) throw updateError;
 
-      setBusiness({ ...business, logo_url: fileName });
+      setBusiness({ ...business, logo_url: publicUrl });
       alert("Logo updated successfully!");
     } catch (error) {
       console.error("Error saving logo:", error);
@@ -296,14 +303,18 @@ const DashboardPage = () => {
 
       if (uploadError) throw uploadError;
 
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("business-assets").getPublicUrl(fileName);
+
       const { data: updateData, error: updateError } = await supabase
         .from("businesses")
-        .update({ background_url: fileName })
+        .update({ background_url: publicUrl })
         .eq("id", business.id);
 
       if (updateError) throw updateError;
 
-      setBusiness({ ...business, background_url: fileName });
+      setBusiness({ ...business, background_url: publicUrl });
       alert("Background image updated successfully!");
     } catch (error) {
       console.error("Error saving background:", error);
@@ -339,6 +350,35 @@ const DashboardPage = () => {
       alert("Failed to update rating factors");
     }
   };
+
+  const imagePreviewSection = (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+      {business?.logo_url && (
+        <div className="p-4 border rounded-lg">
+          <h4 className="text-sm font-medium text-gray-700 mb-2">
+            Current Logo
+          </h4>
+          <img
+            src={business.logo_url}
+            alt="Business Logo"
+            className="max-h-32 object-contain"
+          />
+        </div>
+      )}
+      {business?.background_url && (
+        <div className="p-4 border rounded-lg">
+          <h4 className="text-sm font-medium text-gray-700 mb-2">
+            Current Background
+          </h4>
+          <img
+            src={business.background_url}
+            alt="Background Image"
+            className="max-h-32 object-cover w-full"
+          />
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-8">

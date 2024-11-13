@@ -20,6 +20,16 @@ const BusinessPage = ({ params }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [email, setEmail] = useState("");
   const [showThankYouModal, setShowThankYouModal] = useState(false);
+  const [ratingFactor1Value, setRatingFactor1Value] = useState(0);
+  const [ratingFactor2Value, setRatingFactor2Value] = useState(0);
+  const [ratingFactor3Value, setRatingFactor3Value] = useState(0);
+
+  // Add default rating factors
+  const defaultRatingFactors = {
+    rating_factor_1: "Quality",
+    rating_factor_2: "Service",
+    rating_factor_3: "Value for Money",
+  };
 
   useEffect(() => {
     fetchBusinessDetails();
@@ -27,14 +37,14 @@ const BusinessPage = ({ params }) => {
 
   useEffect(() => {
     const newOverallRating = Math.round(
-      (qualityRating + quantityRating + serviceRating) / 3
+      (ratingFactor1Value + ratingFactor2Value + ratingFactor3Value) / 3
     );
     setOverallRating(newOverallRating);
 
     if (newOverallRating >= 4) {
       redirectToGoogleReview();
     }
-  }, [qualityRating, quantityRating, serviceRating]);
+  }, [ratingFactor1Value, ratingFactor2Value, ratingFactor3Value]);
 
   const fetchBusinessDetails = async () => {
     try {
@@ -46,7 +56,19 @@ const BusinessPage = ({ params }) => {
         .single();
 
       if (error) throw error;
-      setBusiness(data);
+
+      // Merge default rating factors with business data
+      const businessWithDefaults = {
+        ...data,
+        rating_factor_1:
+          data.rating_factor_1 || defaultRatingFactors.rating_factor_1,
+        rating_factor_2:
+          data.rating_factor_2 || defaultRatingFactors.rating_factor_2,
+        rating_factor_3:
+          data.rating_factor_3 || defaultRatingFactors.rating_factor_3,
+      };
+
+      setBusiness(businessWithDefaults);
     } catch (error) {
       console.error("Error fetching business details:", error);
       setError(error.message);
@@ -79,11 +101,11 @@ const BusinessPage = ({ params }) => {
           phoneNumber,
           email,
           overallRating,
-          qualityRating,
-          quantityRating,
-          serviceRating,
+          rating_factor_1: ratingFactor1Value,
+          rating_factor_2: ratingFactor2Value,
+          rating_factor_3: ratingFactor3Value,
           description,
-          businessId: business.id, // Include the business ID
+          businessId: business.id,
         }),
       });
 
@@ -91,7 +113,7 @@ const BusinessPage = ({ params }) => {
         setShowThankYouModal(true);
         setTimeout(() => {
           setShowThankYouModal(false);
-        }, 5000);
+        }, 3000);
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error submitting review");
@@ -105,27 +127,31 @@ const BusinessPage = ({ params }) => {
     }
   };
 
-  const SubReviewItem = ({ title, rating, setRating }) => (
-    <div className="mb-4">
-      <label className="block text-gray-700 text-sm font-semibold mb-2">
-        {title}
-      </label>
-      <div className="flex space-x-1">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <Star
-            key={star}
-            size={24}
-            onClick={() => setRating(star)}
-            className={`cursor-pointer transition-colors duration-200 ${
-              star <= rating
-                ? "text-yellow-400 fill-yellow-400"
-                : "text-gray-300"
-            }`}
-          />
-        ))}
+  const SubReviewItem = ({ title, rating, setRating }) => {
+    if (!title) return null;
+
+    return (
+      <div className="mb-4">
+        <label className="block text-gray-700 text-sm font-semibold mb-2">
+          {title}
+        </label>
+        <div className="flex space-x-1">
+          {[1, 2, 3, 4, 5].map((star) => (
+            <Star
+              key={star}
+              size={24}
+              onClick={() => setRating(star)}
+              className={`cursor-pointer transition-colors duration-200 ${
+                star <= rating
+                  ? "text-yellow-400 fill-yellow-400"
+                  : "text-gray-300"
+              }`}
+            />
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   if (loading) return <ShimmerEffect />;
   if (error) return <div>Error: {error}</div>;
@@ -135,29 +161,49 @@ const BusinessPage = ({ params }) => {
     <div className="min-h-screen bg-gradient-to-br from-blue-100 via-purple-100 to-pink-100 p-8">
       <div className="max-w-3xl mx-auto backdrop-blur-sm bg-white/60 rounded-3xl shadow-[0_8px_32px_0_rgba(31,38,135,0.25)] border border-white/20 overflow-hidden">
         <div className="p-8">
-          <h1 className="text-3xl font-bold text-gray-800/90 mb-4 ">
-            {business.name}
-          </h1>
-          <p className="text-gray-700/80 mb-8">
-            Please leave a review to help us improve
-          </p>
+          <div className="flex items-center gap-4 mb-8">
+            <div className="w-16 h-16 rounded-full bg-white/50 flex items-center justify-center">
+              <img
+                src={business.logo || "/default-logo.png"}
+                alt={`${business.name} logo`}
+                className="w-12 h-12 object-contain rounded-full"
+              />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-800/90 mb-2">
+                {business.name}
+              </h1>
+              <p className="text-gray-700/80">
+                Please leave a review to help us improve
+              </p>
+            </div>
+          </div>
 
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <SubReviewItem
-                title="Quality"
-                rating={qualityRating}
-                setRating={setQualityRating}
+                title={
+                  business?.rating_factor_1 ||
+                  defaultRatingFactors.rating_factor_1
+                }
+                rating={ratingFactor1Value}
+                setRating={setRatingFactor1Value}
               />
               <SubReviewItem
-                title="Quantity"
-                rating={quantityRating}
-                setRating={setQuantityRating}
+                title={
+                  business?.rating_factor_2 ||
+                  defaultRatingFactors.rating_factor_2
+                }
+                rating={ratingFactor2Value}
+                setRating={setRatingFactor2Value}
               />
               <SubReviewItem
-                title="Service"
-                rating={serviceRating}
-                setRating={setServiceRating}
+                title={
+                  business?.rating_factor_3 ||
+                  defaultRatingFactors.rating_factor_3
+                }
+                rating={ratingFactor3Value}
+                setRating={setRatingFactor3Value}
               />
             </div>
 
