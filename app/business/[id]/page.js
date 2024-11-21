@@ -113,7 +113,7 @@ const BusinessPage = ({ params }) => {
         setShowThankYouModal(true);
         setTimeout(() => {
           setShowThankYouModal(false);
-        }, 3000);
+        }, 20000);
       } else {
         const errorData = await response.json();
         throw new Error(errorData.message || "Error submitting review");
@@ -262,48 +262,51 @@ const BusinessPage = ({ params }) => {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-white text-sm font-semibold mb-2">
-                      Your Name
-                    </label>
-                    <input
-                      type="text"
-                      id="name"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
-                      required
-                      placeholder="Enter your name"
-                    />
-                  </div>
+                  {params.id !== "15" && (
+                    <>
+                      <div>
+                        <label className="block text-white text-sm font-semibold mb-2">
+                          Your Name
+                        </label>
+                        <input
+                          type="text"
+                          id="name"
+                          value={name}
+                          onChange={(e) => setName(e.target.value)}
+                          className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
+                          placeholder="Enter your name"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-white text-sm font-semibold mb-2">
-                      Phone Number
-                    </label>
-                    <input
-                      type="tel"
-                      id="phoneNumber"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
-                      placeholder="Enter your phone number"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-white text-sm font-semibold mb-2">
+                          Phone Number
+                        </label>
+                        <input
+                          type="tel"
+                          id="phoneNumber"
+                          value={phoneNumber}
+                          onChange={(e) => setPhoneNumber(e.target.value)}
+                          className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
+                          placeholder="Enter your phone number"
+                        />
+                      </div>
 
-                  <div>
-                    <label className="block text-white text-sm font-semibold mb-2">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      id="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
-                      placeholder="Enter your email address"
-                    />
-                  </div>
+                      <div>
+                        <label className="block text-white text-sm font-semibold mb-2">
+                          Email Address
+                        </label>
+                        <input
+                          type="email"
+                          id="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="w-full px-4 py-3 text-white bg-white/10 backdrop-blur-xl border border-white/40 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400/50 focus:border-blue-400/50 placeholder-gray-300 shadow-[0_8px_32px_0_rgba(31,38,135,0.1)] transition-all duration-300 hover:bg-white/20"
+                          placeholder="Enter your email address"
+                        />
+                      </div>
+                    </>
+                  )}
 
                   <button
                     type="submit"
