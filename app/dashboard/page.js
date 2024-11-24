@@ -118,7 +118,7 @@ const DashboardPage = () => {
 
   const handleLogout = () => {
     console.log("Logging out...");
-    router.push("/signup");
+    router.push("/login");
   };
 
   const handleBulkSms = () => {
