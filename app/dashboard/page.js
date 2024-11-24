@@ -89,7 +89,7 @@ const DashboardPage = () => {
         data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
-        router.push("/signup");
+        router.push("/login");
         return;
       }
 
