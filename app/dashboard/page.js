@@ -94,15 +94,23 @@ const DashboardPage = () => {
         .from("businesses")
         .select("*")
         .eq("user_id", user.id)
-        .single();
+        .limit(1);
 
       if (error) throw error;
-      setBusiness(data);
-      setUpiId(data.upi_id || "");
-      setPlaceId(data.places_id || "");
-      setRatingFactor1(data.rating_factor_1 || "");
-      setRatingFactor2(data.rating_factor_2 || "");
-      setRatingFactor3(data.rating_factor_3 || "");
+
+      if (!data || data.length === 0) {
+        console.log("No business found for this user");
+        router.push("/signup");
+        return;
+      }
+
+      const business = data[0];
+      setBusiness(business);
+      setUpiId(business.upi_id || "");
+      setPlaceId(business.places_id || "");
+      setRatingFactor1(business.rating_factor_1 || "");
+      setRatingFactor2(business.rating_factor_2 || "");
+      setRatingFactor3(business.rating_factor_3 || "");
     } catch (error) {
       console.error("Error fetching business details:", error);
     }
