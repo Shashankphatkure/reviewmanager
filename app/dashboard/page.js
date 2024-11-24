@@ -88,7 +88,10 @@ const DashboardPage = () => {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      if (!user) throw new Error("No user found");
+      if (!user) {
+        router.push("/signup");
+        return;
+      }
 
       const { data, error } = await supabase
         .from("businesses")
@@ -96,7 +99,34 @@ const DashboardPage = () => {
         .eq("user_id", user.id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        if (error.code === "PGRST116") {
+          // No business found for this user, create one
+          const { data: newBusiness, error: createError } = await supabase
+            .from("businesses")
+            .insert([
+              {
+                user_id: user.id,
+                name: "My Business", // Default name
+                status: "active",
+              },
+            ])
+            .select()
+            .single();
+
+          if (createError) throw createError;
+
+          setBusiness(newBusiness);
+          setUpiId(newBusiness.upi_id || "");
+          setPlaceId(newBusiness.places_id || "");
+          setRatingFactor1(newBusiness.rating_factor_1 || "");
+          setRatingFactor2(newBusiness.rating_factor_2 || "");
+          setRatingFactor3(newBusiness.rating_factor_3 || "");
+          return;
+        }
+        throw error;
+      }
+
       setBusiness(data);
       setUpiId(data.upi_id || "");
       setPlaceId(data.places_id || "");
@@ -105,6 +135,7 @@ const DashboardPage = () => {
       setRatingFactor3(data.rating_factor_3 || "");
     } catch (error) {
       console.error("Error fetching business details:", error);
+      // Optionally show an error message to the user
     }
   };
 
